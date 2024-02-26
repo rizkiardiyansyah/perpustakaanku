@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Translator</title>
+</head>
+<body>
+  <textarea id="englishText" placeholder="Masukkan teks bahasa Inggris" oninput="translateToIndonesian()"></textarea>
+  <p>Terjemahan: <span id="indonesianTranslation"></span></p>
+
+  <script>
+    async function translateToIndonesian() {
+      const englishText = document.getElementById('englishText').value;
+
+      const apiUrl = 'https://api.mymemory.translated.net/get';
+      const params = `?q=${encodeURIComponent(englishText)}&langpair=en|id`;
+      const response = await fetch(apiUrl + params);
+      const data = await response.json();
+
+      if (data && data.responseData && data.responseData.translatedText) {
+        document.getElementById('indonesianTranslation').textContent = data.responseData.translatedText;
+      } else {
+        document.getElementById('indonesianTranslation').textContent = '';
+      }
+    }
+  </script>
+</body>
+</html>

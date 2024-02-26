@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search in TextArea</title>
+  <style>
+    #searchResults {
+      display: none;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Search in TextArea</h1>
+
+  <input type="text" id="searchInput" placeholder="Enter search term..." oninput="search()">
+  <br>
+  <textarea id="textArea" placeholder="Enter your text here..." oninput="search()"></textarea>
+
+  <div id="searchResults">
+    <!-- Hasil pencarian akan ditampilkan di sini -->
+  </div>
+
+  <script>
+    function search() {
+      var searchInput = document.getElementById('searchInput').value;
+      var textArea = document.getElementById('textArea');
+      var textContent = textArea.value;
+
+      // Pecah teks menjadi kalimat
+      var sentences = textContent.split(/[.!?]/);
+
+      // Kosongkan textarea
+      textArea.value = '';
+
+      var found = false;
+
+      sentences.forEach(function (sentence) {
+        if (sentence.toLowerCase().includes(searchInput.toLowerCase())) {
+          // Tampilkan kalimat yang sesuai
+          textArea.value += sentence.trim() + ' ';
+          found = true;
+        } else {
+          textArea.value += sentence.trim() + '. ';
+        }
+      });
+
+      var searchResultsContainer = document.getElementById('searchResults');
+      searchResultsContainer.innerHTML = '';
+
+      if (found) {
+        // Tampilkan hasil pencarian di div dan atur fokus
+        searchResultsContainer.innerHTML = 'Kalimat ditemukan: ' + searchInput;
+        searchResultsContainer.style.display = 'block';
+        textArea.scrollTop = textArea.scrollHeight;
+        textArea.focus();
+      } else {
+        searchResultsContainer.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault();
+        var searchResultsContainer = document.getElementById('searchResults');
+        searchResultsContainer.style.display = 'block';
+        document.getElementById('searchInput').focus();
+      }
+    });
+  </script>
+
+</body>
+</html>

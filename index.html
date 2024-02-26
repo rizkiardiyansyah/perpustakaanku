@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text to Speech from PDF</title>
+</head>
+<body>
+  <input type="file" id="pdfInput" accept=".pdf" />
+  <textarea id="textToSpeak" placeholder="Teks dari PDF akan muncul di sini" readonly></textarea>
+  <button onclick="readPDF()">Baca PDF</button>
+  <button onclick="speak()">Ubah ke Suara</button>
+
+  <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

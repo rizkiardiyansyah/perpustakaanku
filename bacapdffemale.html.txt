@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer with Bootstrap</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .pdf-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+    }
+    .pdf-container textarea {
+      width: 100%;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="pdf-container">
+          <h5 class="mb-3">PDF Viewer</h5>
+          <input type="file" class="form-control mb-2" id="pdf-file" accept=".pdf">
+          <button class="btn btn-primary" onclick="handleFile()">Display PDF</button>
+        </div>
+        <div id="pdf-viewer"></div>
+      </div>
+      <div class="col-md-6">
+        <div class="pdf-container">
+          <h5 class="mb-3">Text from PDF</h5>
+          <textarea id="text-area" class="form-control" rows="20"></textarea>
+          <button class="btn btn-success mt-2" onclick="convertToSpeech()">Convert to Speech</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="pdf.min.js"></script>
+  <script src="pdf.worker.min.js"></script>
+
+  <script>
+    function handleFile() {
+      const fileInput = document.getElementById('pdf-file');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          const typedarray = new Uint8Array(event.target.result);
+          displayPDF(typedarray);
+        };
+
+        reader.readAsArrayBuffer(file);
+      } else {
+        alert('Please select a PDF file.');
+      }
+    }
+
+    function displayPDF(pdfData) {
+      const pdfViewer = document.getElementById('pdf-viewer');
+      const textArea = document.getElementById('text-area');
+      textArea.value = ''; 
+
+      pdfjsLib.getDocument({ data: pdfData }).promise.then(pdf => {
+        const numPages = pdf.numPages;
+        let fullText = '';
+
+        for (let i = 1; i <= numPages; i++) {
+          pdf.getPage(i).then(page => {
+            return page.getTextContent();
+          }).then(content => {
+            const pageText = content.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n';
+            if (i === numPages) {
+              textArea.value = fullText;
+            }
+          });
+        }
+      });
+    }
+
+    function convertToSpeech() {
+      const textArea = document.getElementById('text-area');
+      const textToRead = textArea.value;
+
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = 'id-ID'; // Bahasa Indonesia
+        utterance.voiceURI = 'native';
+        utterance.volume = 1;
+        utterance.rate = 1;
+        utterance.pitch = 1;
+
+        synth.speak(utterance);
+      } else {
+        alert('Text-to-speech is not supported in your browser.');
+      }
+    }
+  </script>
+</body>
+</html>
