@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buka PDF dari Unggahan</title>
+</head>
+<body>
+
+    <input type="file" id="uploadInput" accept=".pdf" onchange="bukaPDF()" />
+    <textarea id="textContainer" rows="10" cols="50"></textarea>
+
+    <script>
+        function bukaPDF() {
+            const input = document.getElementById('uploadInput');
+            const textContainer = document.getElementById('textContainer');
+
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const pdfUrl = e.target.result;
+
+                    // Menampilkan URL PDF di dalam textarea
+                    textContainer.value = pdfUrl;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+</body>
+</html>
