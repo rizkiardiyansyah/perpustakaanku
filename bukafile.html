@@ -8,12 +8,12 @@
 <body>
 
     <input type="file" id="uploadInput" accept=".pdf" onchange="bukaPDF()" />
-    <textarea id="textContainer" rows="10" cols="50"></textarea>
+    <div id="pdfContainer"></div>
 
     <script>
         function bukaPDF() {
             const input = document.getElementById('uploadInput');
-            const textContainer = document.getElementById('textContainer');
+            const pdfContainer = document.getElementById('pdfContainer');
 
             const file = input.files[0];
             if (file) {
@@ -22,8 +22,8 @@
                 reader.onload = function (e) {
                     const pdfUrl = e.target.result;
 
-                    // Menampilkan URL PDF di dalam textarea
-                    textContainer.value = pdfUrl;
+                    // Menampilkan PDF dengan tag <embed>
+                    pdfContainer.innerHTML = `<embed src="${pdfUrl}" type="application/pdf" width="100%" height="600px" />`;
                 };
 
                 reader.readAsDataURL(file);
